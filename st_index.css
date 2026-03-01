@@ -4,21 +4,116 @@ body {
     background-color: #010409;
     color: #dfdfdf;
     font-family: 'DotGothic16', sans-serif;
-    margin: 5px;
+    /* margin: 5 10 10 5; */
+    margin:0 auto;
+    max-width:1000px;
+    padding:0 10px 100px;
 }
 
-
-h1 {font-size: 22px;}
-h2 {font-size: 20px;}
-h3 {font-size: 18px;}
-p  {font-size: 16px; margin: 0;}
+h1 {font-size:22px; margin:0}
+h2 {font-size:20px; margin:0}
+h3 {font-size:18px; margin:0}
+p  {font-size:16px; margin:0}
 
 a { /* スマホでボタンをタップした時に青くなるのを防ぐ */
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* 透明にする */
 }
 
-.header {
+/* 1. 元々の色 (Link) */
+a:link {
+    color: #d4deed;
+    text-decoration: none;
+}
+
+/* 2. 一度訪れた後の色 (Visited) */
+a:visited {
+    color: #d4deed;
+}
+
+/* 3. ホバー時の色 (Hover) */
+a:hover {
+    color: #e9d8dc;
+    text-decoration: underline;
+}
+
+/* 4. クリックした瞬間（アクティブ）の色 (Active) */
+a:active {
+    color: #e53368;
+}
+
+/* .header {
     background-color: #0053da;
     width: 100%;
     height: 160px;
+} */
+/* 画像ヘッダー */
+.header {
+    background-image: url("header.png"); /* 画像のファイル名 */
+    background-size: cover;      /* 領域全体を覆うように調整 */
+    background-position: center; /* 画像の中心を表示 */
+    width: 100%;
+    height: 160px;
+    display: flex;               /* 中の文字を中央に寄せるための設定 */
+    align-items: center;
+    justify-content: center;
+}
+
+/* 表示非表示のトグルボタン */
+.tgl-btn {
+    cursor:pointer;
+    text-decoration:underline;
+    color:#aaaaaa;
+}
+.tgl-btn:hover {color: #dfdfdf}
+.tgl-btn:active {color: #ffffff}
+/* トグルボタンで表示非表示するエリア */
+.hide-area {
+    border:1px solid #dfdfdf;
+    padding: 10px;
+}
+
+
+/* 色 */
+.gnsn{color:#55a3fb}
+.hsr{color:#f45b8e}
+.zzz{color:#01b94d}
+.endf{color:#cef10f}
+
+
+
+/* スライドショー(ギャラリー)エリア全体のコンテナ */
+.imgs-container {
+    position: relative;
+    width: 400px;             /* 画面幅いっぱい */
+    aspect-ratio: 16 / 9;    /* 領域を16:9に固定 */
+    background-color: #000;  /* 異なる比率の画像でできた隙間を黒で埋める（お好みで） */
+    overflow: hidden;         /* はみ出た部分を隠す */
+    border: #aaaaaa solid 2px;
+    /* border-radius:5px; */
+    margin:0 auto;
+}
+
+/* ギャラリーの画像の設定 */
+.imgs-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;     /* ★最重要。画像をアスペクト比を保ったまま領域内に収める */
+    transition: opacity 500ms ease; /* 画像が切り替わる時のフェード効果（お好みで） */
+}
+
+/* プログレスバー */
+#progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;       /* 最初は右いっぱい */
+    height: 4px;       /* メーターの太さ */
+    background-color: #aaaaaa; /* メーターの色 */
+    /* ↓ transitionを「linear（一定速度） */
+    transition: width 10000ms linear;
+}
+
+/* プログレスバーのアニメーション用のクラス（JSで制御） */
+#progress-bar.reset {
+    width: 0%; /* JSでこの状態に切り替える */
 }
