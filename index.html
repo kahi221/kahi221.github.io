@@ -36,24 +36,25 @@
         <div id="progress-bar"></div>
     </div>
     <!-- 画像の日付 -->
-    <p id="img-date" style="text-align:center;font-size:12px; color:#aaaaaa; margin:0">
-
-    </p>
-
-
+    <p id="img-date" style="text-align:center;font-size:12px; color:#aaaaaa; margin:0"></p>
 
     <br>
     <h1>■ プレイスタイル</h1>
     <p>
         　・優先：好きなキャラ > 戦闘性能<br>
         　・基本的にメインストーリーしかやっていません<br>
-        　・アチーブメント、マップ解放等に拘っていません
+        　・アチーブメント、マップ解放等に拘っていません<br>
+        　・アクティブ時間帯は大体22時以降
     </p>
+
+    <!-- <p style="text-align:center">
+        
+    </p> -->
 
     <!-- <h1>目次</h1> -->
     <br>
     <h1>■ プレイ中のゲーム</h1>
-    <p style="text-align:center; padding:3px; background-color:#3e3e3e; margin:0 10px">
+    <p style="text-align:center; padding:3px; background-color:#1f1f1f; margin:0 10px">
         <span class="gnsn">原神</span>, 
         <span class="hsr">HSR</span>, 
         <span class="zzz">ZZZ</span>, 
@@ -63,7 +64,6 @@
 
     <!-- 原神コンテナ -->
     <div>
-        <br>
         <h2 class="gnsn">原神</h2>
         <p>
             　・<strong>始めた日</strong>：2023/12/15<br>
@@ -80,7 +80,8 @@
         <!-- 表示非表示領域 -->
         <div id="hide-area-1" class="hide-area" style="display:none">
             <p>
-                あ
+                サンドローネ実装待機してます。<br>
+                フォンテーヌ編のストーリーとBGMが好きです。
             </p>
         </div>
         <!-- ↑ 動的領域 -->
@@ -105,7 +106,9 @@
         </p>
         <!-- 表示非表示領域 -->
         <div id="hide-area-2" class="hide-area" style="display:none">
-            <p>詳細ですあああ</p>
+            <p>
+                最近は最推しマダムヘルタを強く使うことばかり考えてます。<br>
+            </p>
         </div>
         <!-- ↑ 動的領域 -->
     </div>
@@ -128,7 +131,10 @@
         </p>
         <!-- 表示非表示領域 -->
         <div id="hide-area-3" class="hide-area" style="display:none">
-            <p>詳細ですあああ</p>
+            <p>
+                アンビーとバーニス目当てで始めましたが「11号」推してます。<br>
+                BGM最高
+            </p>
         </div>
         <!-- ↑ 動的領域 -->
     </div>
@@ -151,10 +157,15 @@
         </p>
         <!-- 表示非表示領域 -->
         <div id="hide-area-4" class="hide-area" style="display:none">
-            <p>詳細ですあああ</p>
+            <p>
+                飽きない程度に継続してます
+            </p>
         </div>
         <!-- ↑ 動的領域 -->
     </div>
+
+    <br>
+    <h1>■ データ</h1>
 
 <script>
 //// ギャラリー自動切換え
@@ -190,7 +201,7 @@
     const progressBar = document.getElementById('progress-bar');
     const displayImg = document.getElementById('imgs');
     const dateDisplay = document.getElementById('img-date');
-    
+
     const intervalTime = 10000; // 10秒
     let currentIndex = 0;
 
@@ -204,28 +215,46 @@
         dateDisplay.textContent = `20${yy}/${mm}/${dd}`;
     }
 
-    // 画像切り替え関数
+// 画像切り替え関数
     function changeImage(){
-        displayImg.style.opacity = 0;
-        progressBar.style.transition = 'none';
-        progressBar.style.width = '100%';
+        // 1. 次の画像のインデックスを計算
+        const nextIndex = (currentIndex + 1) % images.length;
+        if(nextIndex === 0){ shuffle(images); }
 
-        setTimeout(() => {
-            currentIndex = (currentIndex + 1) % images.length;
-            if(currentIndex === 0){ shuffle(images); }
+        // 2. 「次に表示する画像」を裏で読み込み（プリロード）開始
+        const nextImgObj = new Image();
+        nextImgObj.src = images[nextIndex];
 
-            const fileName = images[currentIndex];
-            displayImg.src = fileName;
-            updateDate(fileName); // 日付更新
+        // 3. 次の画像が「完全に読み込み完了」してから、フェードアウトを開始する
+        nextImgObj.onload = () => {
+            // 先に画像を透明にする
+            displayImg.style.opacity = 0;
 
-            displayImg.style.opacity = 1;
+            // プログレスバーを100%に戻す
+            progressBar.style.transition = 'none';
+            progressBar.style.width = '100%';
 
+            // フェードアウト(0.5s)待機
             setTimeout(() => {
-                progressBar.style.transition = `width ${intervalTime}ms linear`;
-                progressBar.style.width = '0%';
-                setTimeout(changeImage, intervalTime);
-            }, 50);
-        }, 500);
+                currentIndex = nextIndex; // ここでインデックスを確定
+                const fileName = images[currentIndex];
+
+                // 画像を更新（すでに読み込み済みなので一瞬で出ます）
+                displayImg.src = fileName;
+                updateDate(fileName);
+
+                // 透明度を戻す
+                displayImg.style.opacity = 1;
+
+                // メーターを再開
+                setTimeout(() => {
+                    progressBar.style.transition = `width ${intervalTime}ms linear`;
+                    progressBar.style.width = '0%';
+                    // 10秒後に再びこの関数を呼ぶ
+                    setTimeout(changeImage, intervalTime);
+                }, 50);
+            }, 500);
+        };
     }
 
     // 初回起動
@@ -279,6 +308,11 @@
 
 updateCounter();
 </script>
+<!-- 更新ログ -->
+<br><br><br>
+<p style="text-align:center;font-size:12px; color:#aaaaaa; margin:0">
+    260301_1846
+</p>
 <!-- アクセスカウンタ -->
 <p style="text-align:center; font-size:14px; color:#010409;">
     TOTAL VISITS: <span id="count">00000</span>

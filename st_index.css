@@ -63,6 +63,7 @@ a:active {
     cursor:pointer;
     text-decoration:underline;
     color:#aaaaaa;
+    padding:0 300px 0 10px
 }
 .tgl-btn:hover {color: #dfdfdf}
 .tgl-btn:active {color: #ffffff}
