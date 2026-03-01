@@ -63,7 +63,10 @@ a:active {
     cursor:pointer;
     text-decoration:underline;
     color:#aaaaaa;
-    padding:0 300px 0 10px
+    padding:0 0 0 10px;
+    padding-right: 80%;
+    font-size: 15px;
+    white-space:nowrap;
 }
 .tgl-btn:hover {color: #dfdfdf}
 .tgl-btn:active {color: #ffffff}
@@ -85,7 +88,8 @@ a:active {
 /* スライドショー(ギャラリー)エリア全体のコンテナ */
 .imgs-container {
     position: relative;
-    width: 400px;             /* 画面幅いっぱい */
+    max-width: 498px;             /* 画面幅いっぱい */
+    /* width:100%; */
     aspect-ratio: 16 / 9;    /* 領域を16:9に固定 */
     background-color: #000;  /* 異なる比率の画像でできた隙間を黒で埋める（お好みで） */
     overflow: hidden;         /* はみ出た部分を隠す */
