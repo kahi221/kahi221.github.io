@@ -1,9 +1,10 @@
 /* 260301_1352 */
 /* 基本 */
 body {
-    background-color: #dfdfdf;
+    background-color: #010409;
+    color: #dfdfdf;
     font-family: 'DotGothic16', sans-serif;
-    margin: 0;
+    margin: 5px;
 }
 
 
