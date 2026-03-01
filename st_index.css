@@ -1,0 +1,23 @@
+/* 260301_1352 */
+/* 基本 */
+body {
+    background-color: #dfdfdf;
+    font-family: 'DotGothic16', sans-serif;
+    margin: 0;
+}
+
+
+h1 {font-size: 22px;}
+h2 {font-size: 20px;}
+h3 {font-size: 18px;}
+p  {font-size: 16px; margin: 0;}
+
+a { /* スマホでボタンをタップした時に青くなるのを防ぐ */
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0); /* 透明にする */
+}
+
+.header {
+    background-color: #0053da;
+    width: 100%;
+    height: 160px;
+}
