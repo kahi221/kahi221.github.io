@@ -122,3 +122,20 @@ a:active {
 #progress-bar.reset {
     width: 0%; /* JSでこの状態に切り替える */
 }
+
+/* fixedicon */
+.fixedicon {
+/* 画面に対して固定する設定 */
+  position: fixed;
+    
+  /* 右上からの距離を指定 */
+  top: 20px;   /* 上から20px */
+  right: 20px; /* 右から20px */
+
+  /* 画像のサイズ（お好みで） */
+  width: 100px;
+  height: auto;
+
+  /* 他の要素より手前に表示させる */
+  z-index: 9999;
+}
