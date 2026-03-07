@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>カウントテスト</title>
+</head>
+<body>
+
+    <h1>API通信テスト</h1>
+    <p>現在のテストカウント数: <strong id="count-display">読込中...</strong></p>
+
+    <script>
+        // API利用パスワード
+        const api_pass = "fire-thunder";
+
+        // 加算用関数
+        async function countAPIadd(pw, id){
+            const url = "https://floor02.sakura.ne.jp/function/ct/ct.php?pw=" + pw + "&id=" + id;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("HTTPerr: " + response.status);
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    return data.count;
+                } else {
+                    return "DBerr";
+                }
+            } catch (error) {
+                console.error("RQerr:", error);
+                return "RQerr";
+            }
+        }
+
+        // 取得用関数
+        async function countAPIget(pw, id){
+            // md=get をパラメータに含める
+            const url = "https://floor02.sakura.ne.jp/function/ct/ct.php?pw=" + pw + "&id=" + id + "&md=get";
+
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error("HTTPerr: " + response.status);
+                }
+
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    return data.count;
+                } else {
+                    console.error("DBerr:", data.message);
+                    return "DBerr";
+                }
+            } catch (error) {
+                console.error("RQerr:", error);
+                return "RQerr";
+            }
+        }
+
+        // 画面が読み込まれた時に実行する処理
+        window.addEventListener('DOMContentLoaded', async () => {
+            // APIから取得（awaitを使って結果が返ってくるまで待つ）
+            const resultCount = await countAPIget(api_pass, "test");
+
+            // HTMLの id="count-display" の部分を、取得した数字に書き換える
+            document.getElementById("count-display").innerText = resultCount;
+        });
+    </script>
+</body>
+</html>
