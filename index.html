@@ -186,6 +186,11 @@
     <p>
         　今後追加予定
     </p>
+    
+    <!-- カウント -->
+    <div>
+        
+    </div>
 
 <script>
 //// ギャラリー自動切換え
@@ -310,23 +315,17 @@
         });
     });
 
-    //// アクセスカウンタ
-    async function updateCounter() {
-        // 'kahi-index-2026' の部分は自分の好きな名前に変えてOKです（世界で唯一のキーになります）
-        const key = 'kahi221-github-io-index-counter';
 
-        try {
-            const response = await fetch(`https://api.countapi.xyz/hit/${key}`);
-            const data = await response.json();
-            // 数字を5桁のゼロ埋め（00001など）にして表示
-            document.getElementById('count').innerText = data.value.toString().padStart(5, '0');
-        } catch (error) {
-            console.log("Counter Error:", error);
-            document.getElementById('count').innerText = "-----";
-        }
-    }
+    // countAPI(自作)
+    // 画面が読み込まれた時に実行する処理
+    window.addEventListener('DOMContentLoaded', async () => {
+        // APIから取得（awaitを使って結果が返ってくるまで待つ）
+        const resultCount = await countAPIadd("fire-thunder", "gp_view");
+        // HTMLの id="count-display" の部分を、取得した数字に書き換える
+        document.getElementById("countAPI-display").innerText = resultCount;
+    });
 
-updateCounter();
+
 </script>
 <!-- 更新ログ -->
 <br><br><br>
@@ -334,8 +333,8 @@ updateCounter();
     260301_1846
 </p>
 <!-- アクセスカウンタ -->
-<p style="text-align:center; font-size:14px; color:#010409;">
-    TOTAL VISITS: <span id="count">00000</span>
+<p id="countAPI_display" style="text-align:center; font-size:14px; color:#010409;">
+    
 </p>
 </body>
 </html>
