@@ -372,33 +372,75 @@
     }
 
 
-    // 画面が読み込まれた時に実行する処理
+
+    // 画面が読み込まれた時に、両方の処理をまとめて実行する
     window.addEventListener('DOMContentLoaded', async () => {
-        const countId = "gp_view"; // カウントするIDを変数にしておく
 
-        // ブラウザの記憶（sessionStorage）から「すでにカウントしたか？」を確認
-        const hasVisited = sessionStorage.getItem("visited_" + countId);
-
-        let resultCount;
+        // ------------------------------
+        // 処理1：アクセスカウンター（自動加算）
+        // ------------------------------
+        const viewCountId = "gp_view"; 
+        const hasVisited = sessionStorage.getItem("visited_" + viewCountId);
+        let viewResultCount;
 
         if (hasVisited) {
-            // 【カウント済みの場合】リロードされただけなので、加算せず「取得(get)」だけする
             console.log("visited >>> countAPIget");
-            resultCount = await countAPIget(api_pass, countId);
+            viewResultCount = await countAPIget(api_pass, viewCountId);
         } else {
-            // 【未カウントの場合】初めての訪問なので「加算(add)」して、記憶に記録する
             console.log("firsttime >>> countAPIadd");
-            resultCount = await countAPIadd(api_pass, countId);
-
-            // エラーになっていなければ「訪問済み」の証拠を保存
-            if (resultCount !== "DBerr" && resultCount !== "RQerr") {
-                sessionStorage.setItem("visited_" + countId, "true");
+            viewResultCount = await countAPIadd(api_pass, viewCountId);
+            if (viewResultCount !== "DBerr" && viewResultCount !== "RQerr") {
+                sessionStorage.setItem("visited_" + viewCountId, "true");
             }
         }
 
-        // HTMLの id="countAPI-display" の部分を、取得した数字に書き換える
-        document.getElementById("countAPI-display").innerText = resultCount;
+        // 取得した数字をHTMLに反映（要素が存在する場合のみ）
+        const displayElement = document.getElementById("countAPI-display"); // 先ほど修正したハイフンorアンダーバーに合わせてください
+        if (displayElement) {
+            displayElement.innerText = viewResultCount;
+        }
+
+
+        // ------------------------------
+        // 処理2：見たよボタン（クリックで加算）
+        // ------------------------------
+        const counters = document.querySelectorAll('.simple-counter');
+
+        for (const counter of counters) {
+            const targetId = counter.dataset.id;
+
+            // 1. 初期表示（APIから現在の数字を取得して表示）
+            counter.innerText = "...";
+            const initialCount = await countAPIget(api_pass, targetId);
+            counter.innerText = (initialCount !== "DBerr" && initialCount !== "RQerr") ? initialCount : "err";
+
+            // 2. クリックイベントの登録（クリックで加算）
+            counter.addEventListener('click', async () => {
+                // 連打防止（通信中なら何もしない）
+                if (counter.dataset.processing === "true") return;
+
+                // 処理中フラグを立てて、表示を「...」にする
+                counter.dataset.processing = "true";
+                const originalCount = counter.innerText;
+                counter.innerText = "...";
+
+                // APIを叩いて加算
+                const newCount = await countAPIadd(api_pass, targetId);
+
+                // 結果の反映
+                if (newCount !== "DBerr" && newCount !== "RQerr") {
+                    counter.innerText = newCount;
+                } else {
+                    counter.innerText = originalCount; // 失敗時は元の数字に戻す
+                }
+
+                // 処理中フラグを解除
+                counter.dataset.processing = "false";
+            });
+        }
+
     });
+
 
 
 </script>
@@ -409,5 +451,25 @@
 </p>
 <!-- アクセスカウンタ -->
 <p id="countAPI-display" style="text-align:center; font-size:14px; color:#010409;"></p>
+
+<!-- 見たよボタン -->
+<p>見たよボタン<span class="simple-counter" data-id="gp_haveread"></span></p>
+
+<!-- ↓見たよボタンの見た目 -->
+<style>
+    .simple-counter {
+        display: inline-block;
+        padding: 2px 12px;
+        background-color: #343434;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        cursor: pointer; /* マウスを乗せると指のマークになる */
+        user-select: none;
+        color:#fff;
+    }
+    .simple-counter:hover {
+        background-color: #e53368; /* マウスを乗せると少し色が変わる */
+    }
+</style>
 </body>
 </html>
