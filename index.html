@@ -315,12 +315,64 @@
         });
     });
 
-
+    // ------------------------------
     // countAPI(自作)
+    // ------------------------------
+
+
+    // API利用合言葉
+    const api_pass = "fire-thunder";
+
+    // 加算用関数
+    async function countAPIadd(pw, id){
+        const url = "https://floor02.sakura.ne.jp/function/ct/ct.php?pw=" + pw + "&id=" + id;
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("HTTPerr: " + response.status);
+            const data = await response.json();
+
+            if (data.status === "success") {
+                return data.count;
+            } else {
+                return "DBerr";
+            }
+        } catch (error) {
+            console.error("RQerr:", error);
+            return "RQerr";
+        }
+    }
+
+    // 取得用関数
+    async function countAPIget(pw, id){
+        // md=get をパラメータに含める
+        const url = "https://floor02.sakura.ne.jp/function/ct/ct.php?pw=" + pw + "&id=" + id + "&md=get";
+
+        try {
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error("HTTPerr: " + response.status);
+            }
+
+            const data = await response.json();
+
+            if (data.status === "success") {
+                return data.count;
+            } else {
+                console.error("DBerr:", data.message);
+                return "DBerr";
+            }
+        } catch (error) {
+            console.error("RQerr:", error);
+            return "RQerr";
+        }
+    }
+
+
     // 画面が読み込まれた時に実行する処理
     window.addEventListener('DOMContentLoaded', async () => {
         // APIから取得（awaitを使って結果が返ってくるまで待つ）
-        const resultCount = await countAPIadd("fire-thunder", "gp_view");
+        const resultCount = await countAPIadd(api_pass, "gp_view");
         // HTMLの id="count-display" の部分を、取得した数字に書き換える
         document.getElementById("countAPI-display").innerText = resultCount;
     });
@@ -333,8 +385,6 @@
     260301_1846
 </p>
 <!-- アクセスカウンタ -->
-<p id="countAPI_display" style="text-align:center; font-size:14px; color:#010409;">
-    
-</p>
+<p id="countAPI_display" style="text-align:center; font-size:14px; color:#010409;"></p>
 </body>
 </html>
