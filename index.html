@@ -24,8 +24,8 @@
 
     <br>
     <!-- <p style="text-align:center">ゲーム用プロフィールページ</p> -->
-    <p style="text-align:center; margin-right:20px">
-        <a href="https://x.com/n83orm">X: @n83orm</a>
+    <p style="text-align:center;">
+        <a href="https://x.com/n83orm">@n83orm</a>
         |
         <a href="http://discordapp.com/users/473663926538600448">discord</a>
         |
@@ -59,14 +59,16 @@
         ゲーム内フレンド申請は誰でもどうぞ（メッセージ下さい）<br>
         ストーリーはリアルの用事が完全に終わって、コンディションを整えてからじっくりやりたいタイプなので放置しがちです。<br>
         キャラ下げ・あらゆる作者への過度な批判・リークの類を除いて、地雷等特にありません気にしていません。<br>
-        <a href="https://x.com/n83orm">@n83orm</a>では自由にスクショや録画を投下しています。半分は記録のためという気持ちであげてますが、反応もらえるととても嬉しいです。<br>
-        近いうちにDiscord鯖たてるかもです。誰でも歓迎します
+        <a href="https://x.com/n83orm">@n83orm</a>では自由にスクショや録画を投下しています。半分は記録のためという気持ちであげてますが、反応もらえるととても嬉しいです。
         </p>
     <!-- </div> -->
 
-    <!-- <p style="text-align:center">
-        
-    </p> -->
+    <br>
+    <h1>■ Discordサーバー開設!!</h1>
+    <p>
+        招待URLは <a href="https://discord.gg/7Tu3Px8ccR">[こちら]</a> です<br>
+        どなたでも歓迎です!!　詳細は <a href="https://x.com/n83orm/status/2029906209504121168?s=20">[スレッド]</a> を参照してください
+    </p>
 
     <!-- <h1>目次</h1> -->
     <br>
@@ -125,6 +127,7 @@
         <div id="hide-area-2" class="hide-area" style="display:none">
             <p>
                 最近は最推しマダムヘルタを強く使うことばかり考えてます。<br>
+                たまに素裳PTで裏庭挑戦してます
             </p>
         </div>
         <!-- ↑ 動的領域 -->
@@ -371,9 +374,29 @@
 
     // 画面が読み込まれた時に実行する処理
     window.addEventListener('DOMContentLoaded', async () => {
-        // APIから取得（awaitを使って結果が返ってくるまで待つ）
-        const resultCount = await countAPIadd(api_pass, "gp_view");
-        // HTMLの id="count-display" の部分を、取得した数字に書き換える
+        const countId = "gp_view"; // カウントするIDを変数にしておく
+
+        // ブラウザの記憶（sessionStorage）から「すでにカウントしたか？」を確認
+        const hasVisited = sessionStorage.getItem("visited_" + countId);
+
+        let resultCount;
+
+        if (hasVisited) {
+            // 【カウント済みの場合】リロードされただけなので、加算せず「取得(get)」だけする
+            console.log("visited >>> countAPIget");
+            resultCount = await countAPIget(api_pass, countId);
+        } else {
+            // 【未カウントの場合】初めての訪問なので「加算(add)」して、記憶に記録する
+            console.log("firsttime >>> countAPIadd");
+            resultCount = await countAPIadd(api_pass, countId);
+
+            // エラーになっていなければ「訪問済み」の証拠を保存
+            if (resultCount !== "DBerr" && resultCount !== "RQerr") {
+                sessionStorage.setItem("visited_" + countId, "true");
+            }
+        }
+
+        // HTMLの id="countAPI-display" の部分を、取得した数字に書き換える
         document.getElementById("countAPI-display").innerText = resultCount;
     });
 
@@ -382,9 +405,9 @@
 <!-- 更新ログ -->
 <br><br><br>
 <p style="text-align:center;font-size:12px; color:#aaaaaa; margin:0">
-    260301_1846
+    260307_2209
 </p>
 <!-- アクセスカウンタ -->
-<p id="countAPI_display" style="text-align:center; font-size:14px; color:#010409;"></p>
+<p id="countAPI-display" style="text-align:center; font-size:14px; color:#010409;"></p>
 </body>
 </html>
