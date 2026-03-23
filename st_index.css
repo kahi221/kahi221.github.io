@@ -140,3 +140,105 @@ a:active {
   /* 他の要素より手前に表示させる */
   z-index: 9999;
 }
+
+/* ------------------------------ */
+/* グラフ関連 */
+    /* ボタンを横一列に中央揃えする設定 */
+    .button-container {
+        display: flex;
+        justify-content: center; /* 中央揃え */
+        gap: 10px; /* ボタンとボタンの隙間 */
+        margin-bottom: 20px;
+    }
+
+    /* ボタンの基本デザイン */
+    .range-btn {
+        font-family: 'DotGothic16', sans-serif; /* グラフと同じフォントに */
+        background-color: #222222; /* 未選択時の背景色（暗め） */
+        color: #bbbbbb; /* 未選択時の文字色 */
+        border: 2px solid #444444; /* 枠線 */
+        padding: 4px 16px; /* ボタンの内側の余白 */
+        border-radius: 4px; /* 角を少し丸くする */
+        cursor: pointer; /* マウスを乗せた時に指マークにする */
+        font-size: 16px;
+        transition: all 0.2s ease; /* 色が変わる時にフワッとさせるアニメーション */
+    }
+
+    /* マウスを乗せた時（ホバー）の色 */
+    .range-btn:hover {
+        background-color: #333333;
+        border-color: #666666;
+    }
+
+    /* ★ 選択中（アクティブ）のボタンのデザイン ★ */
+    .range-btn.active {
+        background-color: #595959; /* 原神ブルーのようなアクセントカラー */
+        color: #eeeeee; /* 文字は真っ白に */
+        border-color: #eeeeee;
+        font-weight: bold; /* 文字を太く */
+    }
+
+/* ガチャ石データ */
+/* --- 分析カードのスタイル --- */
+.analysis-container {
+    display: flex;
+    /* justify-content: center; は一旦削除（下のメディアクエリに移動） */
+    gap: 20px;
+    margin-bottom: 10px;
+    font-family: 'DotGothic16', sans-serif;
+
+    /* ★横スクロールの実装 */
+    overflow-x: auto;          /* はみ出た場合にスクロール可能にする */
+    white-space: nowrap;       /* 中身の改行を禁止 */
+    padding: 10px 20px;        /* カードの影が切れないように上下左右に余白 */
+    -webkit-overflow-scrolling: touch; /* iOSでのスクロールを滑らかに */
+}
+
+/* PCなど広い画面（768px以上）では中央に寄せる */
+@media (min-width: 768px) {
+    .analysis-container {
+        justify-content: center;
+    }
+}
+
+.stat-card {
+    background-color: #222222;
+    padding: 15px 25px;
+    border-radius: 6px;
+    color: #bbbbbb;
+
+    /* カードのサイズ */
+    flex: 0 0 190px;
+
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* スクロールバー自体の見た目をダークモードに合わせる（任意） */
+.analysis-container::-webkit-scrollbar {
+    height: 6px;               /* スクロールバーの太さ */
+}
+.analysis-container::-webkit-scrollbar-thumb {
+    background: #444444;       /* バーの色 */
+    border-radius: 10px;
+}
+.analysis-container::-webkit-scrollbar-track {
+    background: transparent;   /* 背景は透明 */
+}
+
+.stat-card h3 {
+    margin: 0 0 10px 0;
+    text-align: center;
+    font-size: 20px;
+}
+.stat-card p {
+    margin: 8px 5px; /* 上下の間隔を少し広げて読みやすく */
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+.stat-card span {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffffff;
+}

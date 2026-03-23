@@ -12,11 +12,6 @@
     <!-- ↑ フォント -->
     <!-- ↓ CSS -->
     <link rel="stylesheet" href="st_index.css">
-    <!-- ↓ プロット用ライブラリ -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
-    <!-- ↓ プロット用js -->
-    <script src="graph.js" defer></script>
     <!-- ↓ ブラウザタブアイコン -->
     <link rel="icon" href="icon.jpg">
     <title>kahi-index</title>
@@ -271,66 +266,19 @@
 
     <br><br>
     <h1>■ データ</h1>
-    <!-- データ -->
-    <div id="last-update-container" style="display:flex; justify-content:space-between; color: #bbbbbb; font-family: 'DotGothic16', sans-serif; margin-bottom: 10px;">
-        <h2 style="color:#ffffff">ガチャ蓄積・推移</h2>
-        <div>
-            <span id="last-update-date">0000-00-00</span> 時点
-        </div>
-    </div>
     <p>
-        2025/10/23 から毎日手動で記録しています。(微~中課金です)<br>
-        　「平均増加」に関しては 前日比=増加 分のみ考慮し、ガチャを引いて減少した日のデータは除外しています。
+        　今後追加予定<br>
+        　候補<br>
+        　・ガチャ石推移<br>
+        　・エンドコンテンツ戦績
     </p>
-    <!-- 円グラフ -->
-    <div id="pie-chart-container" style="position: relative; height: 220px; width: 100%; margin-top: 20px;">
-        <div style="position: absolute; top: 49%; left: 50%; transform: translate(-50%, -50%); text-align: center; font-family: 'DotGothic16', sans-serif;">
-            <div style="font-size: 14px; color: #bbbbbb;">総回転数の割合</div>
-            <!-- <div style="font-size: 12px; color: #888888;"></div> -->
-        </div>
-        <canvas id="myPieChart" style="margin-top:10px"></canvas>
-    </div>
-    <!-- 円グラフ -->
-    <div class="analysis-container">
-        <div class="stat-card">
-            <h3 class="gnsn">原神</h3>
-            <p>総回転数: <span id="gsn-all">0</span> 回</p>
-            <p>紡がれた運命: <span id="gsn-tick">0</span> 個</p>
-            <p>原石: <span id="gsn-stone">0</span> 個</p>
-            <p>平均増加: <span id="gsn-avg">0.00</span> 回/日</p>
-        </div>
-        <div class="stat-card">
-            <h3 class="hsr">HSR</h3>
-            <p>総回転数: <span id="hsr-all">0</span> 回</p>
-            <p>チケット: <span id="hsr-tick">0</span> 枚</p>
-            <p>星玉: <span id="hsr-stone">0</span> 個</p>
-            <p>平均増加: <span id="hsr-avg">0.00</span> 回/日</p>
-        </div>
-        <div class="stat-card">
-            <h3 class="zzz">ZZZ</h3>
-            <p>総回転数: <span id="zzz-all">0</span> 回</p>
-            <p>ﾏｽﾀｰﾃｰﾌﾟ: <span id="zzz-tick">0</span> 個</p>
-            <p>ﾎﾟﾘｸﾛｰﾑ : <span id="zzz-stone">0</span> 個</p>
-            <p>平均増加: <span id="zzz-avg">0.00</span> 回/日</p>
-        </div>
-    </div>
-    <!-- データ -->
-    <!-- 折れ線グラフ -->
-    <!-- <h2>推移</h2> -->
-    <div style="position: relative; height: 500px; width: 100%;">
-        <canvas id="myChart"></canvas>
-    </div>
-    <!-- グラフの区間を選択するボタン -->
-    <div class="button-container">
-        <button class="range-btn active" onclick="changeChartRange('all', this)">全区間</button>
-        <!-- <button class="range-btn" onclick="changeChartRange('6m', this)">半年</button> -->
-        <button class="range-btn" onclick="changeChartRange('3m', this)">3か月</button>
-        <button class="range-btn" onclick="changeChartRange('1m', this)">1か月</button>
-        <button class="range-btn" onclick="changeChartRange('1w', this)">1週間</button>
-    </div>
-    <!-- 折れ線グラフ -->
 
-    <h2>その他今後追加予定...</h2>
+    <!--  -->
+
+    
+
+    <!--  -->
+
 
 
 <script>
