@@ -27,13 +27,29 @@
     <!-- <img src="230821_herta-48p.gif" alt="自作ヘルタアイコン" style="width:100px; margin-left:auto"> -->
     <!-- <img class="fixedicon" src="250820_herta-eyes.gif" alt="自作ヘルタアイコン" style="width:50px; margin-left:auto"> -->
 
+    <!-- ↓ 浮藤餅 -->
+
+    <div id="balloon-container" class="balloon-container">
+        <div class="balloon-content">
+            [SYSTEM] ガチャ石推移データを同期<br>
+            >>> last update: <span id="gsn-dates">2026/03/23</span>
+        </div>
+        <div class="balloon-tip"></div>
+    </div>
+
+    <div id="floating-helper" class="floating-helper">
+        <img class="helper-image" src="260324_herta-trans.gif" alt="自作ヘルタアイコン">
+    </div>
+
+    <!-- ↑ 浮藤餅 -->
+
     <br>
     <!-- <p style="text-align:center">ゲーム用プロフィールページ</p> -->
     <p style="text-align:center;">
         <a href="https://x.com/n83orm">@n83orm</a>
-        |
+        　|　
         <a href="http://discordapp.com/users/473663926538600448">discord</a>
-        |
+        　|　
         <a href="https://github.com/kah221">github</a>
     </p>
 
@@ -58,8 +74,8 @@
     <br>
     <!-- <div> -->
         <p style="text-align:center;font-size:12px; color:#aaaaaa; margin:0; border:solid #dfdfdf 1px; padding: 5px">
-            <img src="250820_herta-eyes.gif" alt="自作ヘルタアイコン" style="width:50px; margin-left:auto">
-            <br>
+            <!-- <img src="250820_herta-eyes.gif" alt="自作ヘルタアイコン" style="width:50px; margin-left:auto">
+            <br> -->
 
         ゲーム内フレンド申請は誰でもどうぞ（メッセージ下さい）<br>
         ストーリーはリアルの用事が完全に終わって、コンディションを整えてからじっくりやりたいタイプなので放置しがちです。<br>
@@ -279,8 +295,8 @@
         </div>
     </div>
     <p>
-        2025/10/23 から毎日手動で記録しています。(微~中課金です)<br>
-        　「平均増加」に関しては 前日比=増加 分のみ考慮し、ガチャを引いて減少した日のデータは除外しています。
+        2025/10/23 から手動で記録しています。(微~中課金)<br>
+        「平均増加」に関しては 前日比=増加 分のみ考慮し、ガチャを引いて減少した日のデータは除外しています。
     </p>
     <!-- 円グラフ -->
     <div id="pie-chart-container" style="position: relative; height: 220px; width: 100%; margin-top: 20px;">
@@ -560,7 +576,7 @@
         // ------------------------------
         // 処理1：アクセスカウンター（自動加算）
         // ------------------------------
-        const viewCountId = "gp_view"; 
+        const viewCountId = "gp_view";
         const hasVisited = sessionStorage.getItem("visited_" + viewCountId);
         let viewResultCount;
 
@@ -581,6 +597,18 @@
             displayElement.innerText = viewResultCount;
         }
 
+
+        // ------------------------------
+        // 浮藤餅クリック回数の取得と表示
+        const fujimochiCountId = 'float-fujimochi-clicked';
+        const fujimochiResultCount = await countAPIget(api_pass, fujimochiCountId);
+
+        // 取得した数字をHTML（下部の要素）に反映
+        const fujimochiDisplay = document.getElementById("countAPI-float-fujimochi-clicked");
+        if (fujimochiDisplay) {
+            fujimochiDisplay.innerText = fujimochiResultCount;
+        }
+        // ------------------------------
 
         // ------------------------------
         // 処理2：見たよボタン（クリックで加算）
@@ -631,6 +659,56 @@
         }
 
     });
+
+    // 浮藤餅
+    // DOM要素を取得
+    const helperBtn = document.getElementById('floating-helper');
+    const balloon = document.getElementById('balloon-container');
+
+    // 画像がクリックまたはタップされた時の処理
+    helperBtn.addEventListener('click', function(e) {
+    // イベントのバブリング（親要素へのクリック伝播）を防ぐ
+    e.stopPropagation();
+
+    // 自作カウントAPI呼び出し
+    if (typeof countAPIadd === 'function'){
+        countAPIadd(api_pass, 'float-fujimochi-clicked')
+    }
+
+
+    // 吹き出しに 'active' クラスを付け外しして表示/非表示を切り替える（既存機能）
+    balloon.classList.toggle('active');
+
+    // ★ここを追加：クリックリアクション（脈動）を実行する
+    // 1. すでにpulsingクラスがある場合は一旦消す（連打対策）
+    helperBtn.classList.remove('pulsing');
+    // 2. DOMの再描画（リフロー）を強制する魔法の一行（アニメーションをリセットするため）
+    void helperBtn.offsetWidth;
+    // 3. pulsing クラスを付与（これでCSSアニメーションが発動）
+    helperBtn.classList.add('pulsing');
+
+    // 4. アニメーションが終わる時間（0.2秒後 = 200ミリ秒後）にpulsingクラスを剥奪する
+    setTimeout(() => {
+        helperBtn.classList.remove('pulsing');
+    }, 200);
+    });
+
+    // --- 以下の吹き出し操作（以前のコード）は変更なし ---
+
+    // 吹き出し自体をクリックした時の処理（非表示にしない）
+    balloon.addEventListener('click', function(e) {
+    // 吹き出し内をクリックしても閉じないようにする
+    e.stopPropagation();
+    });
+
+    // 画面のどこか他の場所をクリックした時に吹き出しを閉じる処理
+    document.addEventListener('click', function() {
+    // 画面をクリックしたら 'active' クラスを剥奪して非表示にする
+    if (balloon.classList.contains('active')) {
+        balloon.classList.remove('active');
+    }
+    });
+
     </script>
 
     <br><br><br>
@@ -641,10 +719,13 @@
 
     <br><br><br>
     <p style="text-align:center;font-size:12px; color:#aaaaaa; margin:0">
-        260307_2320 ~ 260321_0552
+        260307_2320
     </p>
-    <!-- アクセスカウンタ -->
+    <!-- カウンタ -->
+    <!-- アクセス gp_view -->
     <p id="countAPI-display" style="text-align:center; font-size:14px; color:#010409;"></p>
+    <!-- 藤餅click float-fujimochi-clicked -->
+    <p id="countAPI-float-fujimochi-clicked" style="text-align:center; font-size:14px; color:#010409;"></p>
 
     <!-- 見たよボタンのスタイル -->
     <style>
