@@ -179,7 +179,8 @@ async function loadChartData() {
     const gsnDates = Object.keys(genshinData).sort((a, b) => new Date(a.replace(/-/g, '/')) - new Date(b.replace(/-/g, '/')));
     if (gsnDates.length > 0) {
         const lastDate = gsnDates[gsnDates.length - 1];
-        document.getElementById('last-update-date').innerText = lastDate;
+        document.getElementById('last-update-date').innerText = lastDate; // タイトルの横
+        document.getElementById('last-update-date-f').innerText = lastDate; // 浮き
     }
 
     // 分析関数を呼び出して表示を更新
