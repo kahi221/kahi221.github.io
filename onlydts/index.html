@@ -11,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
     <!-- ↑ フォント -->
     <!-- ↓ CSS -->
-    <link rel="stylesheet" href="st_index.css">
+    <link rel="stylesheet" href="../st_index.css">
     <!-- ↓ プロット用ライブラリ -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
@@ -27,14 +27,15 @@
 
     <div id="balloon-container" class="balloon-container">
         <div class="balloon-content">
-            [SYSTEM] ガチャ石推移データを同期<br>
-            >>> last update: <span id="gsn-dates">2026/03/27</span>
+            <span style="color: #e5cd33; margin-bottom: 5px;">[SYSTEM] ガチャ石推移データを同期</span><br>
+            >>> last update: <span id="last-update-date-f">2026-3-29</span><br>
+            <br>
+            <span style="color: #e5cd33;">[UPDATE] タイムラインを追加</span><br>
+            >>> ボタンからゲームタイトルとカテゴリーについて絞り込みが可能です。「戦績」については詳細にデータを取っていないため、今後カテゴリーから削除される可能性が大です。
+
+            <span class="terminal-cursor"></span>
         </div>
         <div class="balloon-tip"></div>
-    </div>
-
-    <div id="floating-helper" class="floating-helper">
-        <img class="helper-image" src="../260324_herta-trans.gif" alt="自作ヘルタアイコン">
     </div>
 
     <!-- ↑ 浮藤餅 -->
@@ -109,7 +110,32 @@
         <button class="range-btn" onclick="changeChartRange('1w', this)">1週間</button>
     </div>
     <!-- 折れ線グラフ -->
-
+    <div id="floating-helper" class="floating-helper">
+        <div id="mini-hint-bubble" class="mini-hint-bubble"><span>・・・</span></div>
+        <img class="helper-image" src="../260324_herta-trans.gif" alt="自作ヘルタアイコン">
+    </div>
+    <div class="timeline-wrapper">
+        <div class="filter-row">
+            <div class="filter-buttons">
+                <span class="filter-label" id="a">フィルタ:</span>
+                <button class="tl-btn active" onclick="changeTimelineFilter('all', this)">全て</button>
+                <button class="tl-btn" onclick="changeTimelineFilter('[ガチャ]', this)">ガチャ</button>
+                <button class="tl-btn" onclick="changeTimelineFilter('[ストーリー]', this)">ストーリー</button>
+                <button class="tl-btn" onclick="changeTimelineFilter('[戦績]', this)">戦績</button>
+                <button class="tl-btn" onclick="changeTimelineFilter('other', this)">その他</button>
+            </div>
+            <div class="filter-buttons only-SP">
+                <div><span class="filter-label" id="b">フィルタ</span></div>
+                <div>
+                    <button class="game-btn game-btn-gsn active" onclick="toggleGameFilter('gsn', this)">原神</button>
+                    <button class="game-btn game-btn-hsr active" onclick="toggleGameFilter('hsr', this)">HSR</button>
+                    <button class="game-btn game-btn-zzz active" onclick="toggleGameFilter('zzz', this)">ZZZ</button>
+                </div>
+            </div>
+        </div>
+        <hr style="border: none; border-top: 1px solid #333; margin: 10px 0;">
+        <div id="timeline-container" class="timeline-container"></div>
+    </div>
 
 
 <script>
@@ -123,7 +149,7 @@
 
     // 加算用関数
     async function countAPIadd(pw, id){
-        const url = "https://floor02.sakura.ne.jp/function/ct/ct.php?pw=" + pw + "&id=" + id;
+        const url = "https://floor02.sakura.ne.jp/function/ct/ct.php?pw=" + pw + "&id=" + id; // ■■ デバッグ時はここをコメントアウト
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error("HTTPerr: " + response.status);
@@ -213,60 +239,6 @@
 
 
     });
-
-
-
-
-    // 浮藤餅
-    // DOM要素を取得
-    const helperBtn = document.getElementById('floating-helper');
-    const balloon = document.getElementById('balloon-container');
-
-    // 画像がクリックまたはタップされた時の処理
-    helperBtn.addEventListener('click', function(e) {
-    // イベントのバブリング（親要素へのクリック伝播）を防ぐ
-    e.stopPropagation();
-
-    // 自作カウントAPI呼び出し
-    if (typeof countAPIadd === 'function'){
-        countAPIadd(api_pass, 'float-fujimochi-clicked')
-    }
-
-
-    // 吹き出しに 'active' クラスを付け外しして表示/非表示を切り替える（既存機能）
-    balloon.classList.toggle('active');
-
-    // ★ここを追加：クリックリアクション（脈動）を実行する
-    // 1. すでにpulsingクラスがある場合は一旦消す（連打対策）
-    helperBtn.classList.remove('pulsing');
-    // 2. DOMの再描画（リフロー）を強制する魔法の一行（アニメーションをリセットするため）
-    void helperBtn.offsetWidth;
-    // 3. pulsing クラスを付与（これでCSSアニメーションが発動）
-    helperBtn.classList.add('pulsing');
-
-    // 4. アニメーションが終わる時間（0.2秒後 = 200ミリ秒後）にpulsingクラスを剥奪する
-    setTimeout(() => {
-        helperBtn.classList.remove('pulsing');
-    }, 200);
-    });
-
-    // --- 以下の吹き出し操作（以前のコード）は変更なし ---
-
-    // 吹き出し自体をクリックした時の処理（非表示にしない）
-    balloon.addEventListener('click', function(e) {
-    // 吹き出し内をクリックしても閉じないようにする
-    e.stopPropagation();
-    });
-
-    // 画面のどこか他の場所をクリックした時に吹き出しを閉じる処理
-    document.addEventListener('click', function() {
-    // 画面をクリックしたら 'active' クラスを剥奪して非表示にする
-    if (balloon.classList.contains('active')) {
-        balloon.classList.remove('active');
-    }
-    });
-
-
     </script>
 
     <br><br><br>
@@ -274,7 +246,7 @@
     <img src="../250820_herta-eyes.gif" alt="自作ヘルタアイコン" style="width:50px; margin-left:auto">
     </p> -->
     <p style="text-align:center;font-size:12px; color:#aaaaaa; margin:0">
-        260324_0313
+        260330_1823
     </p>
     <!-- カウンタ -->
     <!-- アクセス gp_view -->

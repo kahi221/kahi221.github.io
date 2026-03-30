@@ -5,18 +5,19 @@ const STONE_PER_PULL = 160;
 function parseCSV(csvText) {
   const lines = csvText.trim().split('\n');
   const data = {};
-  
+
   for (let i = 1; i < lines.length; i++) {
     const row = lines[i].split(',');
     if (row.length < 3) continue;
 
-    const date = row[0].trim();
-    const tickets = parseFloat(row[1]) || 0;
-    const stones = parseFloat(row[2]) || 0;
-    const totalPulls = tickets + Math.floor(stones / STONE_PER_PULL);
-    
+    const date = row[0].trim(); // 日付
+    const tickets = parseFloat(row[1]) || 0; // チケット系
+    const stones = parseFloat(row[2]) || 0; // 原石系
+    const totalPulls = tickets + Math.floor(stones / STONE_PER_PULL); // 現在引ける回数
+    const text = row[3] ? row[3].trim() : ''; // タイムライン用文字 260329_1031追加
+
     // 内訳を保存
-    data[date] = { totalPulls: totalPulls, tickets: tickets, stones: stones };
+    data[date] = { totalPulls: totalPulls, tickets: tickets, stones: stones, text: text };
   }
   return data;
 }
@@ -26,7 +27,7 @@ let myPieChartInstance = null; // 円グラフの本体を保存する変数
 
 function drawPieChart(gsnStats, hsrStats, zzzStats) {
   const ctxPie = document.getElementById('myPieChart').getContext('2d');
-  
+
   // 以前のグラフがあれば破棄する（再描画時のエラー防止）
   if (myPieChartInstance) {
     myPieChartInstance.destroy();
@@ -175,11 +176,21 @@ async function loadChartData() {
     const starRailData = parseCSV(textStarRail);
     const zzzData = parseCSV(textZzz);
 
+    // タイムライン用データ 260329_1050
+    globalRawData = {
+      gsn: genshinData,
+      hsr: starRailData,
+      zzz: zzzData
+    };
+    // 初回タイムライン描画
+    setTimeout(() => renderTimeline(), 500); // 読み込みのため0.5秒遅らせる
+
     // 更新日の表示
     const gsnDates = Object.keys(genshinData).sort((a, b) => new Date(a.replace(/-/g, '/')) - new Date(b.replace(/-/g, '/')));
     if (gsnDates.length > 0) {
         const lastDate = gsnDates[gsnDates.length - 1];
-        document.getElementById('last-update-date').innerText = lastDate;
+        document.getElementById('last-update-date').innerText = lastDate; // タイトルの横
+        document.getElementById('last-update-date-f').innerText = lastDate; // 浮き
     }
 
     // 分析関数を呼び出して表示を更新
@@ -208,9 +219,19 @@ async function loadChartData() {
   }
 }
 
-// --- 以下の期間絞り込みやグラフ描画のロジックは前回から一切変更なし ---
-let myChartInstance = null;
-let globalFullData = null;
+
+// ------------------------------
+// ↓ グラフ
+// ------------------------------
+
+
+// グラフ・タイムライン共通変数
+let myChartInstance = null; // グラフ用の生データを保存する変数
+let globalFullData = null; // グラフの現在の表示区間を保存する変数
+let globalRawData = null; // タイムライン用の生データを保存する変数
+let currentChartRange = 'all' // グラフの現在の表示区間を保存する変数
+let currentTlFilter = 'all'; // タイムラインの現在の絞り込み状況を保存する変数
+let activeGames = { gsn: true, hsr: true, zzz: true }; // タイムラインの各ゲームの表示状態（デフォルトで全部true）
 
 function filterDataByRange(fullData, range) {
   if (range === 'all') return fullData;
@@ -251,6 +272,9 @@ function filterDataByRange(fullData, range) {
 function changeChartRange(range, btnElement) {
   if (!globalFullData || !myChartInstance) return;
 
+  // 現在のグラフ区間
+  currentChartRange = range;
+
   if (btnElement) {
     const allBtns = document.querySelectorAll('.range-btn');
     allBtns.forEach(btn => btn.classList.remove('active'));
@@ -260,6 +284,9 @@ function changeChartRange(range, btnElement) {
   const newData = filterDataByRange(globalFullData, range);
   myChartInstance.data = newData;
   myChartInstance.update();
+
+  // タイムラインも区間に合わせて再描画（折れ線グラフとタイムラインの区間を同期させたい）
+  renderTimeline();
 }
 
 loadChartData().then(chartData => {
@@ -302,4 +329,232 @@ loadChartData().then(chartData => {
       }
     });
   }
+});
+
+
+// ------------------------------
+// ↑ グラフ
+// ↓ タイムライン
+// ------------------------------
+
+
+// タイムラインをHTMLに描画する関数
+function renderTimeline() {
+    if (!globalRawData || !globalFullData) return;
+
+    // 1. グラフと同じ「基準日（これより古いデータは弾く）」を計算
+    const labels = globalFullData.labels;
+    let cutoffDate = new Date(0); 
+    if (labels.length > 0 && currentChartRange !== 'all') {
+        const latestDateStr = labels[labels.length - 1];
+        cutoffDate = new Date(latestDateStr.replace(/-/g, '/'));
+
+        if (currentChartRange === '1w') cutoffDate.setDate(cutoffDate.getDate() - 7);
+        else if (currentChartRange === '1m') cutoffDate.setMonth(cutoffDate.getMonth() - 1);
+        else if (currentChartRange === '3m') cutoffDate.setMonth(cutoffDate.getMonth() - 3);
+        else if (currentChartRange === '6m') cutoffDate.setMonth(cutoffDate.getMonth() - 6);
+    }
+
+    // 2. データを抽出して配列にまとめる
+    let entries = [];
+    const games = [
+        { id: 'gsn', name: '原神', color: '#55a3fb' },
+        { id: 'hsr', name: 'HSR', color: '#f45b8e' },
+        { id: 'zzz', name: 'ZZZ', color: '#01b94d' }
+    ];
+
+    games.forEach(game => {
+        // このゲームタイトルがOFF（false）になっていたらスキップ
+        if (!activeGames[game.id]) return;
+        const dataObj = globalRawData[game.id];
+        for (let dateStr in dataObj) {
+            const rawText = dataObj[dateStr].text;
+            if (!rawText) continue; // 空文字ならスキップ
+
+            // 期間による除外
+            const itemDate = new Date(dateStr.replace(/-/g, '/'));
+            if (currentChartRange !== 'all' && itemDate < cutoffDate) continue;
+
+            // ディバイダ???で分割
+            const eventArray = rawText.split('|');
+
+            // 分割された個々のイベントに対して処理を行う
+            eventArray.forEach(eventText => {
+                let text = eventText.trim(); // 前後の余分なスペースを消す
+                if (!text) return;
+
+                // 抽出したカテゴリを一時保存する変数
+                let extractedTag = "";
+
+                if (currentTlFilter === 'all') {
+                // [全て]のとき
+                // 先頭にある[]を探して切り取っておく
+                const match = text.match(/^(\[.*?\])/);
+                if (match) {
+                    extractedTag = match[1]; // 見つかったら変数に保存
+                    text = text.replace(extractedTag, '').trim(); // 内容分からは切り取っておく
+                }
+
+                }
+                else if (currentTlFilter === 'other') {
+                    // 「その他」の場合：先頭が [ ] で始まるキーワードを持っている要素を除外する
+                    if (/^\[.*?\]/.test(text)) return;
+                }
+                else {
+                    // 「[ガチャ]」など特定のタグが選ばれている場合
+                    if (!text.includes(currentTlFilter)) return;
+
+                    // 表示テキストから [ガチャ] などの文字を消して、前後の空白を綺麗にする
+                    text = text.replace(currentTlFilter, '').trim();
+                }
+
+                // 条件をクリアしたものをタイムラインのエントリーとして追加
+                entries.push({
+                    dateStr: dateStr,
+                    dateObj: itemDate,
+                    gameName: game.name,
+                    color: game.color,
+                    text: text,
+                    tag: extractedTag // 抽出したカテゴリ
+                });
+            });
+        }
+    });
+
+    // 3. 日付が新しい順（降順）にソート
+    entries.sort((a, b) => b.dateObj - a.dateObj);
+
+    // 4. HTMLに出力
+    const container = document.getElementById('timeline-container');
+    container.innerHTML = ''; // 一旦クリア
+
+    if (entries.length === 0) {
+        container.innerHTML = `
+            <div style="display: flex; justify-content: center; align-items: center; height:100%; color: #888888; font-family: 'DotGothic16', sans-serif;">
+                <p style="margin-left: 10px;">この条件の記録はありません (＠_＠;)</p>
+            </div>
+            `
+        return;
+    }
+
+    entries.forEach(entry => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'timeline-item';
+
+        // カテゴリ情報=tagが存在する場合(つまり[全て]が選択されているとき)グレーの文字としてゲームタイトルの横に挿入する
+        const tagHtml = entry.tag ? `<span style="color: #aaaaaa; font-weight: normal; margin-left: 8px;">${entry.tag}</span>` : '';
+
+        // 左側の線をゲームのテーマカラーにする
+        itemDiv.innerHTML = `
+            <div class="tl-date">${entry.dateStr.replace(/-/g, '/')}</div>
+            <div class="tl-body" style="border-left: 3px solid ${entry.color};">
+                <span class="tl-game" style="color: ${entry.color}">${entry.gameName}${tagHtml}</span>
+                <span class="tl-text">${entry.text}</span>
+            </div>
+        `;
+        container.appendChild(itemDiv);
+    });
+}
+
+// タイムラインの絞り込みボタンが押された時の処理
+function changeTimelineFilter(filterTag, btnElement) {
+    currentTlFilter = filterTag;
+
+    // ボタンの見た目（active）を切り替え
+    const btns = document.querySelectorAll('.tl-btn');
+    btns.forEach(btn => btn.classList.remove('active'));
+    btnElement.classList.add('active');
+
+    // 再描画
+    renderTimeline();
+}
+
+// タイムラインの各ゲームの表示切替のトグルボタンが押されたときの処理
+function toggleGameFilter(gameId, btnElement) {
+    // true/false を反転させる（ONならOFF、OFFならONに）
+    activeGames[gameId] = !activeGames[gameId];
+
+    // 見た目の切り替え（active クラスの付け外し）
+    if (activeGames[gameId]) {
+        btnElement.classList.add('active');
+    } else {
+        btnElement.classList.remove('active');
+    }
+
+    // タイムラインを再計算して描画
+    renderTimeline();
+}
+
+
+// ------------------------------
+// ↓ 浮藤餅（右下キャラ）の制御
+// ------------------------------
+
+window.addEventListener('DOMContentLoaded', () => {
+    const helperBtn = document.getElementById('floating-helper');
+    const balloon = document.getElementById('balloon-container');
+    const miniHintBubble = document.getElementById('mini-hint-bubble');
+
+    if (!helperBtn || !balloon) return;
+
+    let hintTimer; 
+    let hasOpenedBalloon = false;
+
+    if (miniHintBubble) {
+        hintTimer = setTimeout(() => {
+            if (!hasOpenedBalloon) {
+                // まず登場（PopIn）させる
+                miniHintBubble.classList.add('show');
+
+                // 登場アニメーション（0.5秒）が終わった瞬間を検知
+                miniHintBubble.addEventListener('animationend', function(event) {
+                    if (event.animationName === 'bubblePopIn') {
+                        // showを外し、位相をずらした floating クラスへバトンタッチ
+                        miniHintBubble.classList.remove('show');
+                        miniHintBubble.classList.add('floating');
+                    }
+                }, { once: true });
+            }
+        }, 4000);
+    }
+
+    // 画像がクリックまたはタップされた時の処理
+    helperBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        clearTimeout(hintTimer);
+        hasOpenedBalloon = true;
+
+        if (miniHintBubble) {
+            // 両方のクラスを確実に消す
+            miniHintBubble.classList.remove('show');
+            miniHintBubble.classList.remove('floating');
+        }
+
+        balloon.classList.toggle('active');
+
+        helperBtn.classList.remove('pulsing');
+        void helperBtn.offsetWidth;
+        helperBtn.classList.add('pulsing');
+
+        setTimeout(() => {
+            helperBtn.classList.remove('pulsing');
+        }, 200);
+
+        // 裏側でカウントアップ通信
+        if (typeof countAPIadd === 'function' && typeof api_pass !== 'undefined'){
+            countAPIadd(api_pass, 'float-fujimochi-clicked').then(newCount => {
+                const fujimochiDisplay = document.getElementById("countAPI-float-fujimochi-clicked");
+                if (fujimochiDisplay && newCount !== "DBerr" && newCount !== "RQerr") {
+                    fujimochiDisplay.innerText = newCount;
+                }
+            });
+        }
+    });
+
+    // 吹き出し自体をクリックした時の処理
+    balloon.addEventListener('click', function(e) { e.stopPropagation(); });
+    // 画面外クリックで閉じる処理
+    document.addEventListener('click', function() {
+        if (balloon.classList.contains('active')) { balloon.classList.remove('active'); }
+    });
 });
