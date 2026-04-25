@@ -558,3 +558,15 @@ window.addEventListener('DOMContentLoaded', () => {
         if (balloon.classList.contains('active')) { balloon.classList.remove('active'); }
     });
 });
+
+
+// 今日の日付
+const now = new Date(); // 日付
+// const month = String(now.getMonth() + 1).padStart(2, '0'); // 月は0開始なので+1，padStartで2桁に揃える
+const month = String(now.getMonth() + 1); // 月は0開始なので+1，padStartで2桁に揃える
+// const day = String(now.getDate()).padStart(2, '0');
+const day = String(now.getDate());
+// フォーマット
+const formattedDate = `${month}/${day}`;
+
+document.getElementById('today').textContent = formattedDate;

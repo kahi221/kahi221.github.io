@@ -86,7 +86,7 @@
 
         ゲーム内フレンド申請は誰でもどうぞ（メッセージ下さい）<br>
         ストーリーはリアルの用事が完全に終わって、コンディションを整えてからじっくりやりたいタイプなので放置しがちです。<br>
-        キャラ下げ・あらゆる作者への過度な批判・リークの類を除いて、地雷等特にありません気にしていません。<br>
+        キャラ下げ・あらゆる作者への過度な批判・リークの類を除いて、地雷等一切ありません。<br>
         <a href="https://x.com/n83orm">@n83orm</a>ではスクショや録画を投下しています。半分は記録のためという気持ちであげてますが反応もらえるととても嬉しいです。
         </p>
     <!-- </div> -->
@@ -94,7 +94,8 @@
     <br><br>
     <h1>■ Discordサーバーあります</h1>
     <p>
-        招待URLは <a href="https://discord.gg/7Tu3Px8ccR">[こちら]</a> です<br>
+        ゲーム関連の小規模な雑談鯖です<br>
+        招待URLは <a href="https://discord.gg/8aCwtj5HWN">[こちら]</a> です（あと5人 <span id="today">00/00</span>時点）<br>
         どなたでも歓迎です!!　詳細・経緯は <a href="https://x.com/n83orm/status/2029906209504121168?s=20">[スレッド]</a> を参照してください
     </p>
 
@@ -115,6 +116,7 @@
         <h2 class="gnsn">原神</h2>
         <p>
             　・<strong>始めた日</strong>：2023/12/15<br>
+            　・<strong>UID／名前</strong>：894604227／かひ<br>
             　・<strong>魔人任務進捗</strong>：[Ver6.3]空月の歌 第8幕<br>
             　・<strong>好きなキャラ</strong>：胡桃, ナヴィア, スカーク, サンドローネ, ...
         </p>
@@ -143,6 +145,7 @@
         <h2 class="hsr">HSR</h2>
         <p>
             　・<strong>始めた日</strong>：2024/02/12<br>
+            　・<strong>UID／名前</strong>：831387605／imoritan/かひ<br>
             　・<strong>開拓クエスト進捗</strong>：二相楽園の最新章まで完了<br>
             　・<strong>好きなキャラ</strong>：ヘルタ, ルアン, 素裳, セイレンス, ...
         </p>
@@ -170,6 +173,7 @@
         <h2 class="zzz">ZZZ</h2>
         <p>
             　・<strong>始めた日</strong>：2025/04/12<br>
+            　・<strong>UID／名前</strong>：1314721425／imoritan<br>
             　・<strong>メインストーリー進捗</strong>：シーズン2 新・エリー都の落日(上)<br>
             　・<strong>好きなキャラ</strong>：11号, アンビー, イゾルデ, ...
         </p>
@@ -209,8 +213,8 @@
         <!-- 表示非表示領域 -->
         <div id="hide-area-4" class="hide-area" style="display:none">
             <p>
-                飽きない程度に継続してます。工業システム楽しい<br>
-                現在ガチャ運ボロボロです
+                工業システム楽しい<br>
+                最近はたまーにログイン... 260425
             </p>
         </div>
         <!-- ↑ 動的領域 -->
@@ -235,7 +239,7 @@
         <div id="hide-area-5" class="hide-area" style="display:none">
             <p>
                 前から気になってはいました。自分のことなので何かと理由を付けて未履修に終わるんだろうと思っていたところ、友人からギフトで貰ったので逃れられなくなりました。<br>
-                公式サイト立ち絵では、現時点で黒部ナノカ, 橘シェリーが好きそうです。
+                現在、やれやれハラスメントを受けています。
             </p>
         </div>
         <!-- ↑ 動的領域 -->
@@ -285,7 +289,7 @@
             <p>
                 25年9月から半年間、switchの電池が膨張していたので封印していましたが最近復帰しました。<br>
                 プレイスタイルはエンジョイ寄りです<br>
-                趣味で作成した「ブキをランダムで抽選するツール」は <a href="https://drop221.net/?t=b">[こちら]</a> です。(絞込み機能が強力です)
+                趣味で作成した「ブキをランダムで抽選するツール」は <a href="https://drop221.net/?t=b">[こちら]</a> です。(絞込み機能が強力!!)
             </p>
         </div>
         <!-- ↑ 動的領域 -->
@@ -457,7 +461,11 @@
         'imgs/260315_11gouright.png',
         'imgs/260315_trigger.png',
         'imgs/260317_obols+.png',
-        'imgs/260320_11gouholiday.png'
+        'imgs/260320_11gouholiday.png',
+        'imgs/260420_elevator.png',
+        'imgs/260420_elevator2.png',
+        'imgs/260420_zetsubou.png',
+        'imgs/260409_ringo.png'
     ];
 
     // リストをシャッフル
@@ -638,7 +646,7 @@
         }
 
         // 取得した数字をHTMLに反映（要素が存在する場合のみ）
-        const displayElement = document.getElementById("countAPI-display"); // 先ほど修正したハイフンorアンダーバーに合わせてください
+        const displayElement = document.getElementById("countAPI-display");
         if (displayElement) {
             displayElement.innerText = viewResultCount;
         }
