@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>アクセス解析 自己除外設定 | kahi221</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        font-family:
+          "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          "Hiragino Sans", "Noto Sans JP", sans-serif;
+        background: #161618;
+        color: #ebebec;
+        line-height: 1.7;
+      }
+      .card {
+        width: 100%;
+        max-width: 460px;
+        background: #1e1e20;
+        border: 1px solid #393639;
+        border-radius: 14px;
+        padding: 2rem 1.75rem;
+      }
+      h1 {
+        font-size: 1.3rem;
+        margin: 0 0 0.25rem;
+        color: #fff;
+      }
+      .sub {
+        font-size: 0.85rem;
+        color: #b8b8b8;
+        margin: 0 0 1.5rem;
+      }
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.9rem 1rem;
+        border-radius: 10px;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+      }
+      .status.excluded {
+        background: rgba(132, 165, 157, 0.15);
+        border: 1px solid #84a59d;
+        color: #84a59d;
+      }
+      .status.tracked {
+        background: rgba(123, 151, 170, 0.12);
+        border: 1px solid #7b97aa;
+        color: #7b97aa;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .status.excluded .dot {
+        background: #84a59d;
+      }
+      .status.tracked .dot {
+        background: #7b97aa;
+      }
+      button {
+        width: 100%;
+        border: none;
+        border-radius: 10px;
+        padding: 0.85rem 1rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        transition: filter 0.15s ease;
+      }
+      button:hover {
+        filter: brightness(1.12);
+      }
+      button:active {
+        filter: brightness(0.95);
+      }
+      .btn-exclude {
+        background: #84a59d;
+        color: #11221f;
+        margin-bottom: 0.75rem;
+      }
+      .btn-enable {
+        background: transparent;
+        color: #b8b8b8;
+        border: 1px solid #393639;
+      }
+      .note {
+        font-size: 0.78rem;
+        color: #888;
+        margin-top: 1.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid #2a2a2c;
+      }
+      .note code {
+        background: #2a2a2c;
+        padding: 0.1rem 0.35rem;
+        border-radius: 4px;
+        font-size: 0.9em;
+      }
+      a {
+        color: #7b97aa;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>アクセス解析 自己除外設定</h1>
+      <p class="sub">このブラウザからの閲覧を Umami の集計に含めるかを切り替える．</p>
+
+      <div id="status" class="status tracked">
+        <span class="dot"></span>
+        <span id="status-text">状態を確認中…</span>
+      </div>
+
+      <button class="btn-exclude" id="btn-exclude">このブラウザを集計から除外する</button>
+      <button class="btn-enable" id="btn-enable">除外を解除する（集計に含める）</button>
+
+      <p class="note">
+        この設定はこのブラウザ・この端末のみに保存される（<code>localStorage</code>
+        を使用）．別の端末やブラウザでは，それぞれこのページを開いて設定する必要がある．
+        設定後は <a href="./">kahi221 トップへ戻る</a>．
+      </p>
+    </div>
+
+    <script>
+      var KEY = "umami.disabled";
+      var statusEl = document.getElementById("status");
+      var statusText = document.getElementById("status-text");
+
+      function render() {
+        var disabled = localStorage.getItem(KEY) === "1";
+        if (disabled) {
+          statusEl.className = "status excluded";
+          statusText.textContent = "現在：このブラウザは集計から除外されている";
+        } else {
+          statusEl.className = "status tracked";
+          statusText.textContent = "現在：このブラウザは集計に含まれている";
+        }
+      }
+
+      document.getElementById("btn-exclude").addEventListener("click", function () {
+        localStorage.setItem(KEY, "1");
+        render();
+      });
+
+      document.getElementById("btn-enable").addEventListener("click", function () {
+        localStorage.removeItem(KEY);
+        render();
+      });
+
+      render();
+    </script>
+  </body>
+</html>
