@@ -29,16 +29,16 @@ div  {
 
 
 a:link {
-    color: #d4deed;
+    color: #bdd0eb;
     text-decoration: none;
 }
 
 a:visited {
-    color: #d4deed;
+    color: rgb(218, 212, 237);
 }
 
 a:hover {
-    color: #e9d8dc;
+    color: #e7c7cf;
     text-decoration: underline;
 }
 
