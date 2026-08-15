@@ -664,7 +664,7 @@
 
     // 加算用関数
     async function countAPIadd(pw, id){
-        // const url = "https://floor02.sakura.ne.jp/function/ct/ct.php?pw=" + pw + "&id=" + id; // ■■ デバッグ時はここをコメントアウト
+        const url = "https://floor02.sakura.ne.jp/function/ct/ct.php?pw=" + pw + "&id=" + id; // ■■ デバッグ時はここをコメントアウト
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error("HTTPerr: " + response.status);
