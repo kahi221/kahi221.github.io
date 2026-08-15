@@ -45,26 +45,91 @@ a:active {
     color: #e53368;
 }
 
+
 /* pタグに埋め込むアイコン画像 */
 .icon-inline {
     height: 1.4em;
     width: auto;
     vertical-align: -0.15em; /* 文字とのズレを微調整 */
     margin: 0 2px;
-    border-radius:22%;
-    border-color:#bacffc;
-    border:solid 0.8px
+    border-radius: 22%;
+    border-color: #bacffc;
+    border: solid 0.8px;
 }
-/* PCのみ有効化（スマホのタップ挙動と競合させない） */
+
+.icon-wrap,
+.link-preview-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.icon-wrap a,
+.link-preview-wrap a {
+    outline: none;
+}
+
+.icon-wrap .icon-popup {
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%) scale(0.85);
+    width: 72px;
+    height: 72px;
+    border-radius: 10%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 50;
+    border-color: #bacffc;
+    border: solid 1px;
+}
+
+.icon-wrap .icon-popup::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #000;
+}
+
+/* ブキルーレットリンクポップ */
+.link-preview-wrap .link-preview-popup {
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%) scale(0.85);
+    width: 380px;           /* アイコンより一回り大きいサイズ。縦横比は画像依存 */
+    height: auto;
+    border-radius: 4px;     /* スクショなので角丸は控えめに */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+    border: solid 1px #bacffc;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 50;
+}
+
+.link-preview-wrap .link-preview-popup::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #000;
+}
+
+/* ================================= */
+/* PCのみ：ホバー／フォーカスで表示させる挙動だけを限定 */
+/* ================================= */
 @media (hover: hover) and (pointer: fine) {
 
-    .icon-wrap {
-        position: relative;
-        display: inline-block;
-    }
-
     /* リンク自体のデフォルト枠は消す */
-    .icon-wrap a,
     a:has(.icon-wrap) {
         outline: none;
     }
@@ -76,80 +141,12 @@ a:active {
         border-radius: 22%;
     }
 
-    .icon-wrap .icon-popup {
-        position: absolute;
-        bottom: 130%;
-        left: 50%;
-        transform: translateX(-50%) scale(0.85);
-        width: 72px;
-        height: 72px;
-        border-radius: 10%;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transition: opacity 0.15s ease, transform 0.15s ease;
-        z-index: 50;
-        border-color: #bacffc;
-        border: solid 1px;
-    }
-
-    .icon-wrap .icon-popup::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 6px solid transparent;
-        border-top-color: #000;
-    }
-
     /* マウスホバーに加え、キーボードフォーカスでも表示する */
     .icon-wrap:hover .icon-popup,
     .icon-wrap:focus-within .icon-popup {
         opacity: 1;
         visibility: visible;
         transform: translateX(-50%) scale(1);
-    }
-}
-
-/* ブキルーレットリンクポップ */
-@media (hover: hover) and (pointer: fine) {
-
-    .link-preview-wrap {
-        position: relative;
-        display: inline-block;
-    }
-
-    .link-preview-wrap a {
-        outline: none;
-    }
-
-    .link-preview-wrap .link-preview-popup {
-        position: absolute;
-        bottom: 130%;
-        left: 50%;
-        transform: translateX(-50%) scale(0.85);
-        width: 380px;           /* アイコンより一回り大きいサイズ。縦横比は画像依存 */
-        height: auto;
-        border-radius: 4px;     /* スクショなので角丸は控えめに */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-        border: solid 1px #bacffc;
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transition: opacity 0.15s ease, transform 0.15s ease;
-        z-index: 50;
-    }
-
-    .link-preview-wrap .link-preview-popup::after {
-        content: "";
-        position: absolute;
-        top: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-        border: 6px solid transparent;
-        border-top-color: #000;
     }
 
     .link-preview-wrap:hover .link-preview-popup,
